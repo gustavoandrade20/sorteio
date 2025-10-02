@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteio Interativo de Nomes</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #6c5ce7, #00cec9);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+  .container {
+    background: rgba(0,0,0,0.4);
+    padding: 30px 40px;
+    border-radius: 15px;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+  }
+  h1 { margin-bottom: 15px; }
+  #participantes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  input {
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    width: 200px;
+    margin-right: 10px;
+    font-size: 16px;
+  }
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: #fd79a8;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin: 5px 0;
+  }
+  button:hover { background: #e84393; }
+  .rolando {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffeaa7;
+    margin-top: 30px;
+    min-height: 40px;
+  }
+  .resultado {
+    font-size: 28px;
+    font-weight: bold;
+    background: #00cec9;
+    padding: 20px;
+    border-radius: 15px;
+    display: none;
+    margin-top: 20px;
+  }
+  .nome-item span {
+    margin-right: 5px;
+  }
+  .nome-item button {
+    padding: 2px 5px;
+    font-size: 12px;
+    background: #d63031;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .nome-item button:hover {
+    background: #e17055;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Sorteio Interativo de Nomes 🎉</h1>
+
+  <div id="participantes"><span>Nenhum</span></div>
+
+  <div>
+    <input type="text" id="nomeInput" placeholder="Digite um nome">
+    <button onclick="adicionarNome()">Adicionar</button>
+  </div>
+
+  <button id="sortearBtn" onclick="iniciarRoleta()">Sortear</button>
+  <button id="novoSorteioBtn" onclick="novoSorteio()" style="display:none;">Fazer outro sorteio</button>
+
+  <div id="rolando" class="rolando"></div>
+  <div id="resultado" class="resultado"></div>
+</div>
+
+<script>
+  let nomes = [];
+  let rodada = 1;
+  let intervaloRoleta = null;
+  let vencedorAtual = "";
+
+  function atualizarParticipantes() {
+    const div = document.getElementById("participantes");
+    div.innerHTML = ""; // limpa
+
+    if (nomes.length === 0) {
+      const nenhum = document.createElement("span");
+      nenhum.innerText = "Nenhum";
+      div.appendChild(nenhum);
+      return;
+    }
+
+    nomes.forEach((nome, index) => {
+      const nomeDiv = document.createElement("div");
+      nomeDiv.className = "nome-item";
+      nomeDiv.style.display = "flex";
+      nomeDiv.style.alignItems = "center";
+      nomeDiv.style.background = "rgba(255,255,255,0.1)";
+      nomeDiv.style.padding = "5px 10px";
+      nomeDiv.style.borderRadius = "5px";
+
+      nomeDiv.innerHTML = `<span>${nome}</span><button onclick="removerNome(${index})">X</button>`;
+      div.appendChild(nomeDiv);
+    });
+  }
+
+  function adicionarNome() {
+    const input = document.getElementById("nomeInput");
+    const nome = input.value.trim();
+    if (nome === "") return;
+    if (nomes.length >= 20) {
+      alert("Máximo de 20 participantes!");
+      return;
+    }
+    nomes.push(nome);
+    input.value = "";
+    atualizarParticipantes();
+  }
+
+  function removerNome(index) {
+    nomes.splice(index, 1);
+    atualizarParticipantes();
+  }
+
+  function iniciarRoleta() {
+    if (nomes.length < 2) {
+      alert("Digite pelo menos 2 nomes para o sorteio!");
+      return;
+    }
+
+    // Definir vencedor: nas 4 primeiras rodadas, o segundo nome sempre ganha
+    if (rodada <= 4) {
+      vencedorAtual = nomes[1];
+    } else {
+      vencedorAtual = nomes[Math.floor(Math.random() * nomes.length)];
+    }
+
+    document.getElementById("resultado").style.display = "none";
+    document.getElementById("novoSorteioBtn").style.display = "none";
+    document.getElementById("sortearBtn").disabled = true;
+
+    const rolandoDiv = document.getElementById("rolando");
+    let i = 0;
+
+    intervaloRoleta = setInterval(() => {
+      const aleatorio = nomes[Math.floor(Math.random() * nomes.length)];
+      rolandoDiv.innerText = "🔄 " + aleatorio;
+      i++;
+      if (i > 20) {
+        clearInterval(intervaloRoleta);
+        rolandoDiv.innerText = "🎉 " + vencedorAtual + " 🎉";
+        document.getElementById("resultado").style.display = "block";
+        document.getElementById("novoSorteioBtn").style.display = "inline-block";
+        rodada++;
+      }
+    }, 100);
+  }
+
+  function novoSorteio() {
+    document.getElementById("rolando").innerText = "";
+    document.getElementById("resultado").style.display = "none";
+    document.getElementById("sortearBtn").disabled = false;
+  }
+</script>
+
+</body>
+</html>
