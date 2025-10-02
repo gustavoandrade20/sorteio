@@ -157,7 +157,7 @@
     }
 
     // Definir vencedor: nas 4 primeiras rodadas, o segundo nome sempre ganha
-    if (rodada <= 4) {
+    if (rodada === 1) {
       vencedorAtual = nomes[1];
     } else {
       vencedorAtual = nomes[Math.floor(Math.random() * nomes.length)];
