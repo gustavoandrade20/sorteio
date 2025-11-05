@@ -103,13 +103,12 @@
 
 <script>
   let nomes = [];
-  let rodada = 1;
   let intervaloRoleta = null;
   let vencedorAtual = "";
 
   function atualizarParticipantes() {
     const div = document.getElementById("participantes");
-    div.innerHTML = ""; // limpa
+    div.innerHTML = "";
 
     if (nomes.length === 0) {
       const nenhum = document.createElement("span");
@@ -156,12 +155,8 @@
       return;
     }
 
-    // Definir vencedor: nas 4 primeiras rodadas, o segundo nome sempre ganha
-    if (rodada === 1) {
-      vencedorAtual = nomes[1];
-    } else {
-      vencedorAtual = nomes[Math.floor(Math.random() * nomes.length)];
-    }
+    // Sorteio 100% aleatório
+    vencedorAtual = nomes[Math.floor(Math.random() * nomes.length)];
 
     document.getElementById("resultado").style.display = "none";
     document.getElementById("novoSorteioBtn").style.display = "none";
@@ -179,7 +174,7 @@
         rolandoDiv.innerText = "🎉 " + vencedorAtual + " 🎉";
         document.getElementById("resultado").style.display = "block";
         document.getElementById("novoSorteioBtn").style.display = "inline-block";
-        rodada++;
+        document.getElementById("sortearBtn").disabled = false;
       }
     }, 100);
   }
